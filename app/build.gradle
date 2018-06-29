@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'io.objectbox'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.example.ragabuza.baseragaapp"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            java {
+                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/"
+            }
+        }
+    }
+}
+
+dependencies {
+    final RETROFIT_VERSION = '2.4.0'
+    final BUTTER_KNIFE_VERSION = '8.8.1'
+    final DAGGER_VERSION = '2.7'
+
+    provided project(':raga-annotation')
+    kapt project(':raga-processor')
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+
+    compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
+    implementation 'com.android.support:design:27.1.1'
+    kapt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
+
+    implementation "com.google.dagger:dagger:$DAGGER_VERSION"
+}

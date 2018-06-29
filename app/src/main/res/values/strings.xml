@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BaseRagaApp</string>
+    <string name="ola">ola</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
