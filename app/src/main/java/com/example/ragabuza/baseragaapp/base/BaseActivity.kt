@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
-import com.example.ragabuza.baseragaaap.Navigator
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -27,7 +26,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
         ButterKnife.bind(this)
-        Navigator.bind(this)
     }
 
     fun dismissDialog() {

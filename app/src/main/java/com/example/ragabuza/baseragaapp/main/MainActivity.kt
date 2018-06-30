@@ -14,7 +14,6 @@ class MainActivity : BaseActivity() {
 
     override val presenter = MainPresenter()
 
-    @Parameter lateinit var string: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

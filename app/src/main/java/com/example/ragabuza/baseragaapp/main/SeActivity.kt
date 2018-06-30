@@ -12,16 +12,17 @@ import kotlinx.android.synthetic.main.nice.*
 
 class SeActivity : BaseActivity(){
 
-    @Parameter lateinit var um: List<String>
-    @Parameter(true) lateinit var dois: List<String?>
-    @Parameter var tres: List<String>? = null
-    @Parameter(true) var quatro: List<String?>? = null
+    @Parameter companion object {
+        lateinit var nullList: List<String?>
+        lateinit var nonNullList: List<Example>
+    }
 
     override val presenter = SePresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.nice)
+        goToSeActivity()
     }
 
     @OnClick(R.id.show)

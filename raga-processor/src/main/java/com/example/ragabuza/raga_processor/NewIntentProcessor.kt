@@ -1,13 +1,14 @@
 package com.example.ragabuza.raga_processor
 
 import com.example.ragabuza.raga_annotation.Parameter
-import com.example.ragabuza.raga_annotation.splitLists
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.jvm.internal.impl.name.FqName
 import kotlin.reflect.jvm.internal.impl.platform.JavaToKotlinClassMap
@@ -19,13 +20,7 @@ class NewIntentProcessor : AbstractProcessor() {
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-        val fileSpec = FileSpec.builder("com.example.ragabuza.baseragaaap", "Initiator")
-        val navFun = FunSpec.builder("bind")
-                .addModifiers(KModifier.PUBLIC)
-                .addParameter(
-                        "activity", ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")
-                )
-        var elseModifier = ""
+        val fileSpec = FileSpec.builder("com.example.ragabuza.baseragaaap", "Navigator")
     }
 
 
@@ -35,33 +30,19 @@ class NewIntentProcessor : AbstractProcessor() {
         file.mkdir()
 
         roundEnv.getElementsAnnotatedWith(Parameter::class.java)
-                .splitLists { it.enclosingElement }
                 .forEach {
-                    generateNewMethod(it.key as Element, it.value)
+                    generateNewMethod(it.enclosingElement, it.enclosedElements)
                 }
 
 
         fileSpec.build()
                 .writeTo(file)
 
-        val navClass = TypeSpec.classBuilder("Navigator")
-        val companion = TypeSpec.companionObjectBuilder()
-        companion.addFunction(navFun.build())
-        navClass.addType(companion.build())
-        FileSpec.builder("com.example.ragabuza.baseragaaap", "Navigator")
-                .addType(navClass.build())
-                .build()
-                .writeTo(file)
-
         return false
     }
 
-    private fun generateNewMethod(activity: Element, parameters: MutableList<Element>) {
+    private fun generateNewMethod(activity: Element, parameters: MutableList<out Element>) {
         val packageOfMethod = processingEnv.elementUtils.getPackageOf(activity).toString()
-        val className = activity.simpleName.toString() + "Holder"
-
-        val holderClass = TypeSpec.classBuilder(className)
-        val companion = TypeSpec.companionObjectBuilder()
 
         val activityName = activity.simpleName.toString()
         val activityClass = ClassName(packageOfMethod, activityName)
@@ -70,35 +51,20 @@ class NewIntentProcessor : AbstractProcessor() {
                 .addModifiers(KModifier.PUBLIC)
                 .receiver(ClassName("android.content", "Context"))
 
-        navFun.addStatement("$elseModifier if (activity is %T) {", activityClass)
+        parameters.filter { it.kind == ElementKind.METHOD && (it as ExecutableElement).parameters.isNotEmpty() }.forEach {
+            val parameter = (it as ExecutableElement).parameters[0]
+            val parameterName = it.getParameterName()
+            goToFuncBuilder.addParameter(parameterName, parameter.javaToKotlinType())
 
-        parameters.forEach {
-            val type = it.javaToKotlinType(it.getAnnotation(Parameter::class.java).nullableArray)
-            val parameterName = it.simpleName.toString()
-            goToFuncBuilder.addParameter(parameterName, type)
-
-            goToFuncBuilder.addCode("$className.$parameterName = $parameterName\n")
-            if (type.isLateInit() && !it.isNullable())
-                companion.addProperty(PropertySpec.varBuilder(parameterName, type, KModifier.LATEINIT).build())
-            else
-                companion.addProperty(PropertySpec.varBuilder(parameterName, type).initializer("null").build())
-
-            navFun.addStatement("   activity.$parameterName = $className.$parameterName")
+            goToFuncBuilder.addStatement("%T.$parameterName = $parameterName\n", activityClass)
         }
-
-        elseModifier = "else"
-
-        navFun.addStatement("}")
 
         goToFuncBuilder.addStatement("val intent = %T(this, %T::class.java)",
                 ClassName("android.content", "Intent"),
                 activityClass)
                 .addCode("startActivity(intent)")
 
-        holderClass.addType(companion.build())
-
         fileSpec.addFunction(goToFuncBuilder.build())
-                .addType(holderClass.build())
 
     }
 
@@ -107,36 +73,30 @@ class NewIntentProcessor : AbstractProcessor() {
     }
 }
 
-private fun TypeName.isLateInit(): Boolean {
-    val exclude = listOf(
-            Int::class.asTypeName(),
-            Long::class.asTypeName(),
-            Float::class.asTypeName(),
-            Boolean::class.asTypeName()
-    )
-    return this !in exclude && this !in exclude.map { it.asNullable() }
+private fun Element.getParameterName(): String {
+    return simpleName.toString().drop(3).decapitalize()
 }
 
 private fun Element.isNullable(): Boolean {
     return this.getAnnotation(org.jetbrains.annotations.Nullable::class.java) != null
 }
 
-fun Element.javaToKotlinType(nullable: Boolean = false): TypeName {
+fun Element.javaToKotlinType(): TypeName {
     return if (isNullable())
-        asType().asTypeName().javaToKotlinType(nullable).asNullable()
+        asType().asTypeName().javaToKotlinType().asNullable()
     else
-        asType().asTypeName().javaToKotlinType(nullable).asNonNullable()
+        asType().asTypeName().javaToKotlinType().asNonNullable()
 }
 
-private fun TypeName.javaToKotlinType(nullable: Boolean): TypeName {
+private fun TypeName.javaToKotlinType(): TypeName {
     return if (this is ParameterizedTypeName) {
         ParameterizedTypeName.get(
-                rawType.javaToKotlinType(nullable) as ClassName,
+                rawType.javaToKotlinType() as ClassName,
                 *typeArguments.map {
-                    if (nullable) {
-                        it.javaToKotlinType(nullable).asNullable()
+                    if (rawType.isAnnotated) {
+                        it.javaToKotlinType().asNullable()
                     } else {
-                        it.javaToKotlinType(nullable).asNonNullable()
+                        it.javaToKotlinType().asNonNullable()
                     }
                 }.toTypedArray()
         )
