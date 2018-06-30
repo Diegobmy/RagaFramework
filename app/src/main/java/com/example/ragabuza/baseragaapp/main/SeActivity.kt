@@ -3,6 +3,7 @@ package com.example.ragabuza.baseragaapp.main
 import android.os.Bundle
 import android.provider.ContactsContract
 import butterknife.OnClick
+import com.example.ragabuza.baseragaaap.goToSeActivity
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
 import com.example.ragabuza.baseragaapp.base.Example
@@ -21,7 +22,6 @@ class SeActivity : BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.nice)
-        loadSeActivityExtras()
     }
 
     @OnClick(R.id.show)

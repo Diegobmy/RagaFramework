@@ -19,23 +19,48 @@ class NewIntentProcessor : AbstractProcessor() {
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+        val fileSpec = FileSpec.builder("com.example.ragabuza.baseragaaap", "Initiator")
+        val navFun = FunSpec.builder("bind")
+                .addModifiers(KModifier.PUBLIC)
+                .addParameter(
+                        "activity", ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")
+                )
+        var elseModifier = ""
     }
 
-    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
 
-        roundEnv.getElementsAnnotatedWith(Parameter::class.java).splitLists { it.enclosingElement }.forEach {
-            generateNewMethod(it.key as Element, it.value)
-        }
+    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        val generatedSourcesRoot: String = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME].orEmpty()
+        val file = File(generatedSourcesRoot)
+        file.mkdir()
+
+        roundEnv.getElementsAnnotatedWith(Parameter::class.java)
+                .splitLists { it.enclosingElement }
+                .forEach {
+                    generateNewMethod(it.key as Element, it.value)
+                }
+
+
+        fileSpec.build()
+                .writeTo(file)
+
+        val navClass = TypeSpec.classBuilder("Navigator")
+        val companion = TypeSpec.companionObjectBuilder()
+        companion.addFunction(navFun.build())
+        navClass.addType(companion.build())
+        FileSpec.builder("com.example.ragabuza.baseragaaap", "Navigator")
+                .addType(navClass.build())
+                .build()
+                .writeTo(file)
 
         return false
     }
 
     private fun generateNewMethod(activity: Element, parameters: MutableList<Element>) {
-        val generatedSourcesRoot: String = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME].orEmpty()
         val packageOfMethod = processingEnv.elementUtils.getPackageOf(activity).toString()
-        val fileName = activity.simpleName.toString() + "Navigator"
+        val className = activity.simpleName.toString() + "Holder"
 
-        val navClass = TypeSpec.classBuilder(fileName)
+        val holderClass = TypeSpec.classBuilder(className)
         val companion = TypeSpec.companionObjectBuilder()
 
         val activityName = activity.simpleName.toString()
@@ -45,40 +70,36 @@ class NewIntentProcessor : AbstractProcessor() {
                 .addModifiers(KModifier.PUBLIC)
                 .receiver(ClassName("android.content", "Context"))
 
-        val loadFuncBuilder = FunSpec.builder("load${activityName}Extras")
-                .addModifiers(KModifier.PUBLIC)
-                .receiver(activityClass)
+        navFun.addStatement("$elseModifier if (activity is %T) {", activityClass)
 
         parameters.forEach {
             val type = it.javaToKotlinType(it.getAnnotation(Parameter::class.java).nullableArray)
             val parameterName = it.simpleName.toString()
             goToFuncBuilder.addParameter(parameterName, type)
 
-            goToFuncBuilder.addCode("$fileName.$parameterName = $parameterName\n")
+            goToFuncBuilder.addCode("$className.$parameterName = $parameterName\n")
             if (type.isLateInit() && !it.isNullable())
                 companion.addProperty(PropertySpec.varBuilder(parameterName, type, KModifier.LATEINIT).build())
             else
                 companion.addProperty(PropertySpec.varBuilder(parameterName, type).initializer("null").build())
 
-            loadFuncBuilder.addStatement("$parameterName = $fileName.$parameterName")
+            navFun.addStatement("   activity.$parameterName = $className.$parameterName")
         }
+
+        elseModifier = "else"
+
+        navFun.addStatement("}")
 
         goToFuncBuilder.addStatement("val intent = %T(this, %T::class.java)",
                 ClassName("android.content", "Intent"),
                 activityClass)
                 .addCode("startActivity(intent)")
 
+        holderClass.addType(companion.build())
 
-        navClass.addType(companion.build())
+        fileSpec.addFunction(goToFuncBuilder.build())
+                .addType(holderClass.build())
 
-
-        val file = File(generatedSourcesRoot)
-        file.mkdir()
-        FileSpec.builder(packageOfMethod, fileName)
-                .addFunction(goToFuncBuilder.build())
-                .addFunction(loadFuncBuilder.build())
-                .addType(navClass.build()).build()
-                .writeTo(file)
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
@@ -112,7 +133,7 @@ private fun TypeName.javaToKotlinType(nullable: Boolean): TypeName {
         ParameterizedTypeName.get(
                 rawType.javaToKotlinType(nullable) as ClassName,
                 *typeArguments.map {
-                    if (nullable){
+                    if (nullable) {
                         it.javaToKotlinType(nullable).asNullable()
                     } else {
                         it.javaToKotlinType(nullable).asNonNullable()

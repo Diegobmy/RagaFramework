@@ -29,6 +29,7 @@ class MainActivity : BaseActivity() {
 
     @OnClick(R.id.get)
     fun onGet(){
+
     }
 
     fun loadData(string: String) {
