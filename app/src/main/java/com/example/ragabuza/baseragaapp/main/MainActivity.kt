@@ -7,13 +7,13 @@ import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
 import com.example.ragabuza.baseragaapp.base.Message
 import com.example.ragabuza.baseragaapp.base.getMessage
+import com.example.ragabuza.baseragaapp.goToSeActivity
 import com.example.ragabuza.raga_annotation.Parameter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
     override val presenter = MainPresenter()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class MainActivity : BaseActivity() {
 
     @OnClick(R.id.get)
     fun onGet(){
-
+        presenter.goNext()
     }
 
     fun loadData(string: String) {
@@ -40,7 +40,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun goToNext() {
-//        SeActivity.push(this, SeParams("funciona", 4))
+        goToSeActivity()
     }
 
     fun toasmebaby(response: Message) {

@@ -1,21 +1,21 @@
 package com.example.ragabuza.baseragaapp.main
 
 import android.os.Bundle
-import android.provider.ContactsContract
 import butterknife.OnClick
-import com.example.ragabuza.baseragaaap.goToSeActivity
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
 import com.example.ragabuza.baseragaapp.base.Example
+import com.example.ragabuza.baseragaapp.goToSeActivity
 import com.example.ragabuza.raga_annotation.Parameter
+import com.example.ragabuza.raga_annotation.Preference
 import kotlinx.android.synthetic.main.nice.*
 
 class SeActivity : BaseActivity(){
 
-    @Parameter companion object {
-        lateinit var nullList: List<String?>
-        lateinit var nonNullList: List<Example>
-    }
+    @Preference("sharedTest") lateinit var test: String
+    @Preference lateinit var ola: Example
+
+    @Parameter companion object{}
 
     override val presenter = SePresenter()
 

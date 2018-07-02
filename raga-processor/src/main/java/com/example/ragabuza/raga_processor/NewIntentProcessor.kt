@@ -20,7 +20,7 @@ class NewIntentProcessor : AbstractProcessor() {
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-        val fileSpec = FileSpec.builder("com.example.ragabuza.baseragaaap", "Navigator")
+        val fileSpec = FileSpec.builder("com.example.ragabuza.baseragaapp", "Navigator")
     }
 
 
@@ -70,44 +70,5 @@ class NewIntentProcessor : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(Parameter::class.java.canonicalName)
-    }
-}
-
-private fun Element.getParameterName(): String {
-    return simpleName.toString().drop(3).decapitalize()
-}
-
-private fun Element.isNullable(): Boolean {
-    return this.getAnnotation(org.jetbrains.annotations.Nullable::class.java) != null
-}
-
-fun Element.javaToKotlinType(): TypeName {
-    return if (isNullable())
-        asType().asTypeName().javaToKotlinType().asNullable()
-    else
-        asType().asTypeName().javaToKotlinType().asNonNullable()
-}
-
-private fun TypeName.javaToKotlinType(): TypeName {
-    return if (this is ParameterizedTypeName) {
-        ParameterizedTypeName.get(
-                rawType.javaToKotlinType() as ClassName,
-                *typeArguments.map {
-                    if (rawType.isAnnotated) {
-                        it.javaToKotlinType().asNullable()
-                    } else {
-                        it.javaToKotlinType().asNonNullable()
-                    }
-                }.toTypedArray()
-        )
-    } else {
-        val className = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(toString()))
-                ?.asSingleFqName()?.asString()
-
-        return if (className == null) {
-            this
-        } else {
-            ClassName.bestGuess(className)
-        }
     }
 }
