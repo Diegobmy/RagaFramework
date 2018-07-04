@@ -1,10 +1,8 @@
 package com.example.ragabuza.baseragaapp.base
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import io.objectbox.Box
 import io.objectbox.BoxStore
-import io.objectbox.query.Query
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +16,7 @@ abstract class BasePresenter<V> where V : BaseActivity {
     lateinit var view: V
     lateinit var boxStore: BoxStore
     private lateinit var globalVars: HashMap<String, Any>
-    private lateinit var shared: SharedPreferences
+    lateinit var shared: SharedPreferences
 
     fun initPresenter(view: V, boxStore: BoxStore, shared: SharedPreferences, globalVars: HashMap<String, Any>) {
         this.view = view
@@ -26,56 +24,7 @@ abstract class BasePresenter<V> where V : BaseActivity {
         this.globalVars = globalVars
         this.shared = shared
         onCreate()
-    }
 
-    internal inline infix fun <reified T> T.saveToSharedAs(value: SharedValues) {
-        val editor = shared.edit()
-        if (!value.isArray)
-            when (value.clazz) {
-                Boolean::class.java -> editor.putBoolean(value.name, this as Boolean)
-                Float::class.java -> editor.putFloat(value.name, this as Float)
-                Int::class.java -> editor.putInt(value.name, this as Int)
-                Long::class.java -> editor.putLong(value.name, this as Long)
-                String::class.java -> editor.putString(value.name, this as String)
-                else -> editor.putString(value.name, Gson().toJson(this))
-            }
-        else
-            when (value.clazz) {
-                String::class.java -> editor.putStringSet(value.name, this as Set<String>)
-                else -> {
-                    val stringSet = mutableSetOf<String>()
-                    (this as Iterable<*>).forEach {
-                        stringSet.add(Gson().toJson(it))
-                    }
-                    editor.putStringSet(value.name, stringSet)
-                }
-            }
-        editor.apply()
-    }
-
-    internal inline fun <reified T> SharedValues.get(): T = get(null as T)
-
-    internal inline fun <reified T> SharedValues.get(default: T): T{
-        return if (!isArray)
-            when (clazz) {
-                Boolean::class.java -> shared.getBoolean(name, default as Boolean) as T
-                Float::class.java -> shared.getFloat(name, default as Float) as T
-                Int::class.java -> shared.getInt(name, default as Int) as T
-                Long::class.java -> shared.getLong(name, default as Long) as T
-                String::class.java -> shared.getString(name, default as String) as T
-                else -> Gson().fromJson(shared.getString(name, default as String), T::class.java)
-            }
-        else
-            when (clazz) {
-                String::class.java -> shared.getStringSet(name, default as Set<String>) as T
-                else -> {
-                    val set = mutableSetOf<Any>()
-                    shared.getStringSet(name, default as Set<String>).forEach {
-                        set.add(Gson().fromJson(it, clazz))
-                    }
-                    set as T
-                }
-            }
     }
 
     infix fun Any.saveAs(name: String) {

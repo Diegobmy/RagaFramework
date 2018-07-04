@@ -40,7 +40,7 @@ class MainPresenter : BasePresenter<MainActivity>() {
     }
 
     fun goNext() {
-        "nice job man" saveToSharedAs SharedValues.sharedTest
+//        "nice job man" saveToSharedAs SharedValues.sharedTest
         view.goToNext()
     }
 
