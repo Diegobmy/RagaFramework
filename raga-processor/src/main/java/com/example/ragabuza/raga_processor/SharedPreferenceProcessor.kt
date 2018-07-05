@@ -2,7 +2,6 @@ package com.example.ragabuza.raga_processor
 
 import com.example.ragabuza.raga_annotation.SharedController
 import com.example.ragabuza.raga_annotation.capitalizeFirst
-import com.example.ragabuza.raga_annotation.notEqualsTo
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -42,7 +41,8 @@ class SharedPreferenceProcessor : AbstractProcessor() {
 
     val presenterClass = ParameterizedTypeName.get(
             ClassName("com.example.ragabuza.baseragaapp.base", "BasePresenter"),
-            ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")
+            TypeVariableName("T")
+//            ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")
     )
 
     private fun generateNewMethod(parameter: Element, controller: Element) {
@@ -58,13 +58,15 @@ class SharedPreferenceProcessor : AbstractProcessor() {
                 .addModifiers(KModifier.PUBLIC)
                 .receiver(presenterClass)
                 .addParameter(parameterName, parameterType)
+                .addTypeVariable(TypeVariableName("T").withBounds(ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")))
                 .buildGetBody(parameterType, parameterName)
 
         val funcSet = FunSpec.builder("load${parameterName.capitalizeFirst()}")
                 .addModifiers(KModifier.PUBLIC)
                 .receiver(presenterClass)
+                .addTypeVariable(TypeVariableName("T").withBounds(ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")))
                 .returns(parameterType)
-                .buildSetBody(parameterType, parameterName)
+                .buildSetBody(parameterType, parameterName, controllerClass)
 
         fileSpec.addFunction(funcGet.build())
         fileSpec.addFunction(funcSet.build())
@@ -102,27 +104,27 @@ class SharedPreferenceProcessor : AbstractProcessor() {
         return this
     }
 
-    private fun FunSpec.Builder.buildSetBody(parameterType: TypeName, parameterName: String): FunSpec.Builder {
+    private fun FunSpec.Builder.buildSetBody(parameterType: TypeName, parameterName: String, controllerClass: ClassName): FunSpec.Builder {
         when (parameterType) {
             Boolean::class.asTypeName() -> {
-                addStatement("val result = shared.getBoolean(\"$parameterName\", $parameterName)")
+                addStatement("val result = shared.getBoolean(\"$parameterName\", %T().$parameterName)", controllerClass)
             }
             Float::class.asTypeName() -> {
-                addStatement("val result = shared.getFloat(\"$parameterName\", $parameterName)")
+                addStatement("val result = shared.getFloat(\"$parameterName\", %T().$parameterName)", controllerClass)
             }
             Int::class.asTypeName() -> {
-                addStatement("val result = shared.getInt(\"$parameterName\", $parameterName)")
+                addStatement("val result = shared.getInt(\"$parameterName\", %T().$parameterName)", controllerClass)
             }
             Long::class.asTypeName() -> {
-                addStatement("val result = shared.getLong(\"$parameterName\", $parameterName)")
+                addStatement("val result = shared.getLong(\"$parameterName\", %T().$parameterName)", controllerClass)
             }
             String::class.asTypeName() -> {
-                addStatement("val result = shared.getString(\"$parameterName\", $parameterName)")
+                addStatement("val result = shared.getString(\"$parameterName\", %T().$parameterName)", controllerClass)
             }
             else -> {
                 addStatement("val gson = %T()", ClassName("com.google.gson", "Gson"))
                 addStatement("var result = gson.fromJson(shared.getString(\"$parameterName\", \"\"), $parameterType::class.java)")
-                addStatement("if (result == null) result = $parameterName")
+                addStatement("if (result == null) result = %T().$parameterName", controllerClass)
             }
         }
         addStatement("return result")

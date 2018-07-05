@@ -5,7 +5,7 @@ import com.example.ragabuza.raga_annotation.Parameter
 import com.example.ragabuza.raga_annotation.SharedController
 import com.google.gson.Gson
 
-@SharedController class SharedValues(context: Context) {
+@SharedController class SharedValues {
     lateinit var testeString: String
     var testeInt: Int = 0
     var testeBoolean: Boolean = false

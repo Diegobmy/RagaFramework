@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
-import com.example.ragabuza.baseragaapp.loadShared
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -28,7 +27,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPresenter()
-        loadShared()
     }
 
     override fun setContentView(layoutResID: Int) {
