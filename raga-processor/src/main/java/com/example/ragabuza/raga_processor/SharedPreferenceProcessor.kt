@@ -42,7 +42,6 @@ class SharedPreferenceProcessor : AbstractProcessor() {
     val presenterClass = ParameterizedTypeName.get(
             ClassName("com.example.ragabuza.baseragaapp.base", "BasePresenter"),
             TypeVariableName("T")
-//            ClassName("com.example.ragabuza.baseragaapp.base", "BaseActivity")
     )
 
     private fun generateNewMethod(parameter: Element, controller: Element) {

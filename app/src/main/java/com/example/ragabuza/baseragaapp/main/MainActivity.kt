@@ -2,13 +2,9 @@ package com.example.ragabuza.baseragaapp.main
 
 import android.os.Bundle
 import android.widget.Toast
-import butterknife.OnClick
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
-import com.example.ragabuza.baseragaapp.base.Message
-import com.example.ragabuza.baseragaapp.base.getMessage
-import com.example.ragabuza.baseragaapp.goToSeActivity
-import com.example.ragabuza.raga_annotation.Parameter
+import com.example.ragabuza.baseragaapp.base.SimpleListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -18,33 +14,17 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
 
-    @OnClick(R.id.save)
-    fun onSave(){
-        presenter.save(name.text.toString(), type.text.toString())
-        Toast.makeText(this, "save", Toast.LENGTH_SHORT).show()
-    }
+        val adapter = SimpleListAdapter(R.layout.recycler_test, mutableListOf("a", "b", "c", "d"))
+                .justShowText(R.id.text_view_test)
+                .addClick { adapter, position, item ->
+                    adapter.list.removeAt(position)
+                    adapter.notifyDataSetChanged()
+                }
 
-    @OnClick(R.id.get)
-    fun onGet(){
-        presenter.goNext()
-    }
+        recteste.adapter = adapter
 
-    fun loadData(string: String) {
-        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
-    }
 
-    fun getName(): String {
-        return name.text.toString()
-    }
-
-    fun goToNext() {
-        goToSeActivity()
-    }
-
-    fun toasmebaby(response: Message) {
-        Toast.makeText(applicationContext, getMessage(response), Toast.LENGTH_LONG).show()
     }
 
 }

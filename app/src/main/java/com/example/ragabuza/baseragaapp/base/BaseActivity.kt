@@ -8,16 +8,14 @@ import butterknife.ButterKnife
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    abstract val presenter: BasePresenter<*>
+    abstract val presenter: BasePresenter<out BaseActivity>
 
     lateinit var shared: SharedPreferences
 
-    private fun <A> A.setupPresenter() where A : BaseActivity {
-
-        shared = this.getSharedPreferences(
-                this.packageName, Context.MODE_PRIVATE)
-
-        (presenter as BasePresenter<A>).initPresenter(
+    private fun setupPresenter() {
+        shared = getSharedPreferences(
+                packageName, Context.MODE_PRIVATE)
+        (presenter as? BasePresenter<BaseActivity>)?.initPresenter(
                 this,
                 (application as BaseApp).boxStore,
                 shared,

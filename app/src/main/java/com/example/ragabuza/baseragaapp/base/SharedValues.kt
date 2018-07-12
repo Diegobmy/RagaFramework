@@ -1,9 +1,6 @@
 package com.example.ragabuza.baseragaapp.base
 
-import android.content.Context
-import com.example.ragabuza.raga_annotation.Parameter
 import com.example.ragabuza.raga_annotation.SharedController
-import com.google.gson.Gson
 
 @SharedController class SharedValues {
     lateinit var testeString: String

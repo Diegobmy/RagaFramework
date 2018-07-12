@@ -1,6 +1,7 @@
 package com.example.ragabuza.baseragaapp.base
 
 import android.content.SharedPreferences
+import com.example.ragabuza.baseragaapp.main.MyService
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.reactivex.Observable
@@ -24,7 +25,6 @@ abstract class BasePresenter<V> where V : BaseActivity {
         this.globalVars = globalVars
         this.shared = shared
         onCreate()
-
     }
 
     infix fun Any.saveAs(name: String) {
@@ -56,6 +56,8 @@ abstract class BasePresenter<V> where V : BaseActivity {
         cacheBoxes[className] = box as Box<Any>
         return box
     }
+
+    internal val cacheServices = HashMap<String, Any>()
 
     fun <T> Observable<Response<T>>.apiCall(
             loadingMessage: Message? = null,

@@ -22,3 +22,7 @@ fun <T> T.equalsTo(vararg options: T): Boolean{
 fun <T> T.notEqualsTo(vararg options: T): Boolean{
     return !options.contains(this)
 }
+
+fun <T1, T2> Pair<Iterable<T1>, Iterable<T2>>.forEach(action: (firstElement: T1, secondElement: T2) -> Unit) {
+    first.forEach { t1 -> second.forEach { t2 -> action.invoke(t1, t2) } }
+}
