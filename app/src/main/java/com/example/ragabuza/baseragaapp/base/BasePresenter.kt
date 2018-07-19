@@ -50,10 +50,10 @@ abstract class BasePresenter<V> where V : BaseActivity {
     internal inline fun <reified B> box(): Box<B> {
         val className = B::class.java.simpleName
         cacheBoxes.forEach {
-            if (it.key == className) return it.value as Box<B>
+            if (it.key == className) return it.value.cast<Box<B>>()!!
         }
         val box = boxStore.boxFor(B::class.java)
-        cacheBoxes[className] = box as Box<Any>
+        cacheBoxes[className] = box.cast<Box<Any>>()!!
         return box
     }
 
@@ -81,7 +81,7 @@ abstract class BasePresenter<V> where V : BaseActivity {
                         if (response.isSuccessful) {
                             onSuccess.invoke(response.body())
                         } else {
-                            onError.invoke(Message(response as Response<Any>))
+                            onError.invoke(Message(response.cast<Response<Any>>()!!))
                         }
                     }
 

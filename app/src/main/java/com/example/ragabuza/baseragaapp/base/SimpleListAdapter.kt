@@ -35,7 +35,7 @@ class SimpleListAdapter<T>(
     private val listOfActions: MutableList<Pair<Int, (adapter: SimpleListAdapter<T>, view: View, item: T) -> Unit>> = mutableListOf()
     private var click: ((adapter: SimpleListAdapter<T>, index: Int, item: T) -> Unit)? = null
 
-    fun <V : View> addActionForId(@IdRes idRes: Int, action: (adapter: SimpleListAdapter<T>, view: V, item: T) -> Unit): SimpleListAdapter<T>{
+    fun <V : View> forId(@IdRes idRes: Int, action: (adapter: SimpleListAdapter<T>, view: V, item: T) -> Unit): SimpleListAdapter<T>{
         listOfActions.add(Pair(idRes, action as (SimpleListAdapter<T>, View, T) -> Unit))
         return this
     }

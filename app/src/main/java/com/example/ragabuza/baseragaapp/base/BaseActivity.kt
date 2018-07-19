@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : NoPresenterActivity() {
 
     abstract val presenter: BasePresenter<out BaseActivity>
 
@@ -15,7 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun setupPresenter() {
         shared = getSharedPreferences(
                 packageName, Context.MODE_PRIVATE)
-        (presenter as? BasePresenter<BaseActivity>)?.initPresenter(
+        presenter.cast<BasePresenter<BaseActivity>>()?.initPresenter(
                 this,
                 (application as BaseApp).boxStore,
                 shared,
@@ -27,26 +27,7 @@ abstract class BaseActivity : AppCompatActivity() {
         setupPresenter()
     }
 
-    override fun setContentView(layoutResID: Int) {
-        super.setContentView(layoutResID)
-        ButterKnife.bind(this)
-    }
 
-    fun dismissDialog() {
-
-    }
-
-    fun showError(message: Message?) {
-
-    }
-
-    fun showMessage(message: Message?) {
-
-    }
-
-    fun showProgress(message: Message?) {
-
-    }
 
 
 }
