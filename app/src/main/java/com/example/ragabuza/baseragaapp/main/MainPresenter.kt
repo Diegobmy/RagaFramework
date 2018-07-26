@@ -5,5 +5,10 @@ import com.example.ragabuza.baseragaapp.getMyService
 
 class MainPresenter : BasePresenter<MainActivity>() {
 
+    fun teste(){
+        getMyService().hitCountCheck().call {
+            onSuccess {  }
+        }
+    }
 
 }

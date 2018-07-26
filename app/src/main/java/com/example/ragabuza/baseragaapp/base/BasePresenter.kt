@@ -31,10 +31,7 @@ abstract class BasePresenter<V> where V : BaseActivity {
         globalVars[name] = this
     }
 
-    internal inline fun <reified T> load(name: String, default: T): T {
-        return load<T>(name) ?: default
-    }
-
+    internal inline fun <reified T> load(name: String, default: T): T = load<T>(name) ?: default
     internal inline fun <reified T> load(name: String): T? {
         val result = if (globalVars[name] is T)
             globalVars[name] as T
@@ -58,39 +55,4 @@ abstract class BasePresenter<V> where V : BaseActivity {
     }
 
     internal val cacheServices = HashMap<String, Any>()
-
-    fun <T> Observable<Response<T>>.apiCall(
-            loadingMessage: Message? = null,
-            onSuccess: (response: T?) -> Unit,
-            onError: (message: Message) -> Unit
-    ) {
-        subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<Response<T>> {
-                    override fun onComplete() {
-                        view.dismissDialog()
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-                        if (loadingMessage.isNotNull()) {
-                            view.showProgress(loadingMessage)
-                        }
-                    }
-
-                    override fun onNext(response: Response<T>) {
-                        if (response.isSuccessful) {
-                            onSuccess.invoke(response.body())
-                        } else {
-                            onError.invoke(Message(response.cast<Response<Any>>()!!))
-                        }
-                    }
-
-                    override fun onError(e: Throwable) {
-                        onError.invoke(Message(e.localizedMessage))
-                    }
-
-
-                })
-    }
-
 }

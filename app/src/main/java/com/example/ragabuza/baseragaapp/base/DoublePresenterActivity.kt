@@ -11,13 +11,12 @@ abstract class DoublePresenterActivity : BaseActivity() {
     abstract val secondPresenter: BasePresenter<out BaseActivity>
 
     private fun setupSecondaryPresenter() {
-        shared = getSharedPreferences(
-                packageName, Context.MODE_PRIVATE)
-        secondPresenter.cast<BasePresenter<BaseActivity>>()?.initPresenter(
-                this,
-                (application as BaseApp).boxStore,
-                shared,
-                (application as BaseApp).globalVars)
+        secondPresenter.castAndThen<BasePresenter<BaseActivity>> {
+            it.initPresenter(this,
+                    myApp.boxStore,
+                    shared,
+                    myApp.globalVars)
+        }
     }
 
     abstract var conditionFork: Boolean

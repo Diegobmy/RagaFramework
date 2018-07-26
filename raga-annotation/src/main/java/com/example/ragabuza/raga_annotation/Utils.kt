@@ -1,7 +1,7 @@
 package com.example.ragabuza.raga_annotation
 
-fun <T> Iterable<T>.splitLists(condition: (T) -> Any): HashMap<Any, MutableList<T>> {
-    val hashMap = hashMapOf<Any, MutableList<T>>()
+fun <T, R> Iterable<T>.splitLists(condition: (T) -> R): HashMap<R, MutableList<T>> {
+    val hashMap = hashMapOf<R, MutableList<T>>()
     forEach {
         val parameter = condition.invoke(it)
         if (hashMap[parameter] == null)

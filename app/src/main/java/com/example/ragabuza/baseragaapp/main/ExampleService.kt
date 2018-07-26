@@ -1,5 +1,6 @@
 package com.example.ragabuza.baseragaapp.main
 
+import com.example.ragabuza.baseragaapp.base.API
 import com.example.ragabuza.raga_annotation.Service
 import io.reactivex.Observable
 import retrofit2.Response
@@ -15,6 +16,6 @@ data class MyServiceResponse(val response: String)
 @Service("http://www.mocky.io/v2/") interface MyService {
 
     @GET("5b2f05692f000084006a2952")
-    fun hitCountCheck(): Observable<Response<MyServiceResponse>>
+    fun hitCountCheck(): API<MyServiceResponse>
 
 }

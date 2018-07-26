@@ -8,6 +8,8 @@ fun Any?.isNotNull(): Boolean = this != null
 
 inline fun <reified C> Any?.cast(): C? = if (this is C) this else null
 
+inline fun <reified C> Any?.castAndThen(action: (C)->Unit) = if (this is C) action.invoke(this) else null
+
 fun Context.getMessage(message: Message): String = message.getMessage(this)
 
 fun resolveBooleans(vararg booleans: Boolean): Boolean{

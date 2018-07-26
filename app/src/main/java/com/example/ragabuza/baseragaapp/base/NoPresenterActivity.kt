@@ -10,20 +10,50 @@ abstract class NoPresenterActivity : AppCompatActivity() {
         ButterKnife.bind(this)
     }
 
-    fun dismissDialog() {
+    var currentDialog: DialogModel? = null
 
+    fun dismissDialog(type: DialogModel.Type? = null): Boolean {
+        return if (type != null && currentDialog?.type == type){
+            false
+        } else {
+            currentDialog?.dismiss()
+            currentDialog = null
+            true
+        }
     }
 
-    fun showError(message: Message?) {
-
+    fun showDialog(model: DialogModel, replace: Boolean = false): Boolean {
+        return if (currentDialog != null && !replace) {
+            false
+        } else {
+            currentDialog = model
+            model.show(this)
+            true
+        }
     }
 
-    fun showMessage(message: Message?) {
-
+    fun showError(message: Message) {
+//        showDialog(
+//                DialogModel(DialogModel.Type.Error).create {
+//                    this.message = message
+//                }
+//        )
     }
 
-    fun showProgress(message: Message?) {
+    fun showMessage(message: Message) {
+//        showDialog(
+//                DialogModel(DialogModel.Type.Message).create {
+//                    this.message = message
+//                }
+//        )
+    }
 
+    fun showProgress(message: Message? = null) {
+//        showDialog(
+//                DialogModel(DialogModel.Type.Progress).create {
+//                    this.message = message
+//                }
+//        )
     }
 
 }

@@ -12,14 +12,17 @@ abstract class BaseActivity : NoPresenterActivity() {
 
     lateinit var shared: SharedPreferences
 
+    val myApp = application as BaseApp
+
     private fun setupPresenter() {
         shared = getSharedPreferences(
                 packageName, Context.MODE_PRIVATE)
-        presenter.cast<BasePresenter<BaseActivity>>()?.initPresenter(
-                this,
-                (application as BaseApp).boxStore,
-                shared,
-                (application as BaseApp).globalVars)
+        presenter.castAndThen<BasePresenter<BaseActivity>> {
+            it.initPresenter(this,
+                    myApp.boxStore,
+                    shared,
+                    myApp.globalVars)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
