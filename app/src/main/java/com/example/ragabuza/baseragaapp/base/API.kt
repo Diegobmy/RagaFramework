@@ -5,6 +5,7 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
 import retrofit2.Response
 
 
@@ -48,10 +49,19 @@ abstract class API<T> : Observable<Response<T>>() {
     fun doComplete(view: BaseActivity?){
         if (complete != null){
             complete?.invoke()
-        } else view?.dismissDialog()
+        } else view?.dismissDialog(DialogModel.Type.Progress)
     }
 
-    private val builder: ApiBuilder<T> = ApiBuilder(this)
+    private var builder: ApiBuilder<T>
+
+    init {
+           builder =  ApiBuilder(this)
+    }
+
+
+    fun cancel(){
+        unsubscribeOn(Schedulers.io())
+    }
 
     fun call(view: BaseActivity? = null, apiActions: ApiBuilder<T>.() -> Unit) {
         apiActions.invoke(builder)
@@ -80,6 +90,12 @@ abstract class API<T> : Observable<Response<T>>() {
 
 
                 })
+    }
+
+    fun silentCall(action: (T) -> Unit) {
+        call {
+            onSuccess(action)
+        }
     }
 
 }

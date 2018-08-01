@@ -2,9 +2,19 @@ package com.example.ragabuza.baseragaapp.base
 
 import android.content.Context
 
+
 fun Any?.isNull(): Boolean = this == null
 
 fun Any?.isNotNull(): Boolean = this != null
+
+fun Any?.doIfNotNull(action: () -> Unit): Boolean{
+    return if (isNotNull()){
+        action.invoke()
+        true
+    } else {
+        false
+    }
+}
 
 inline fun <reified C> Any?.cast(): C? = if (this is C) this else null
 

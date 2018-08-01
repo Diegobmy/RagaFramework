@@ -8,7 +8,9 @@ import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.ExecutableType
 
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -43,13 +45,32 @@ class TypesConstructorProcessor : AbstractProcessor() {
 
         val activityName = activity.simpleName.toString()
         val activityClass = ClassName(packageOfMethod, activityName)
+        var parameters = (activity.enclosedElements
+                .find { it.kind == ElementKind.CONSTRUCTOR } as ExecutableElement)
+                .parameters
 
-        enum.enclosedElements.filter { it.kind == ElementKind.ENUM_CONSTANT }.forEach {
-            val createNew = FunSpec.builder("${it.simpleName}$activityName")
+        enum.enclosedElements.filter { it.kind == ElementKind.ENUM_CONSTANT }.forEach { enumConstant ->
+            val createNew = FunSpec.builder("${enumConstant.simpleName}$activityName")
                     .addModifiers(KModifier.PUBLIC)
-                    .addStatement("return %T(%T.$it)", activityClass, it.asType())
+
+            val returnString = StringBuilder("return %T(")
+
+            parameters.forEach { parameter ->
+                if (parameter.javaToKotlinType() != enum.javaToKotlinType()) {
+                    createNew.addParameter(parameter.toString(), parameter.javaToKotlinType())
+                    returnString.append("$parameter, ")
+                } else {
+                    returnString.append("%T.$enumConstant, ")
+                }
+            }
+
+            returnString.replace(returnString.length-2, returnString.length, ")")
+
+            createNew.addStatement(returnString.toString(), activityClass, enum.javaToKotlinType())
+
             fileSpec.addFunction(createNew.build())
         }
+
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {

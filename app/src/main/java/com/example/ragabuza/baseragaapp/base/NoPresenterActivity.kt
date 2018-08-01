@@ -2,6 +2,9 @@ package com.example.ragabuza.baseragaapp.base
 
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
+import com.example.ragabuza.baseragaapp.ErrorDialogModel
+import com.example.ragabuza.baseragaapp.MessageDialogModel
+import com.example.ragabuza.baseragaapp.ProgressDialogModel
 
 abstract class NoPresenterActivity : AppCompatActivity() {
 
@@ -33,27 +36,15 @@ abstract class NoPresenterActivity : AppCompatActivity() {
     }
 
     fun showError(message: Message) {
-//        showDialog(
-//                DialogModel(DialogModel.Type.Error).create {
-//                    this.message = message
-//                }
-//        )
+        ErrorDialogModel{ it.message = message }
     }
 
     fun showMessage(message: Message) {
-//        showDialog(
-//                DialogModel(DialogModel.Type.Message).create {
-//                    this.message = message
-//                }
-//        )
+        MessageDialogModel { it.message = message }
     }
 
     fun showProgress(message: Message? = null) {
-//        showDialog(
-//                DialogModel(DialogModel.Type.Progress).create {
-//                    this.message = message
-//                }
-//        )
+        ProgressDialogModel { it.message = message }
     }
 
 }
