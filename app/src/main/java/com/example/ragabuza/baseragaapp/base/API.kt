@@ -1,11 +1,11 @@
 package com.example.ragabuza.baseragaapp.base
 
+import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
 import retrofit2.Response
 
 
@@ -39,17 +39,17 @@ abstract class API<T> : Observable<Response<T>>() {
     fun doError(view: BaseActivity?, result: Message){
         if (error != null){
             error?.invoke(result)
-        } else view?.showError(result)
+        } else view?.showDialog(DialogModel.error())
     }
     fun doBegin(view: BaseActivity?){
         if (begin != null){
             begin?.invoke()
-        } else view?.showProgress()
+        } else view?.showDialog(DialogModel.progress())
     }
     fun doComplete(view: BaseActivity?){
         if (complete != null){
             complete?.invoke()
-        } else view?.dismissDialog(DialogModel.Type.Progress)
+        } else view?.dismissDialog()
     }
 
     private var builder: ApiBuilder<T>

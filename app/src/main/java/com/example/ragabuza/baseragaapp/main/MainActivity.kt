@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.example.ragabuza.baseragaapp.CustomDialogModel
 import com.example.ragabuza.baseragaapp.ProgressDialogModel
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity

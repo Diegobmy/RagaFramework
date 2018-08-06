@@ -2,21 +2,24 @@ package com.example.ragabuza.baseragaapp.base
 
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
-import com.example.ragabuza.baseragaapp.ErrorDialogModel
-import com.example.ragabuza.baseragaapp.MessageDialogModel
-import com.example.ragabuza.baseragaapp.ProgressDialogModel
 
 abstract class NoPresenterActivity : AppCompatActivity() {
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
         ButterKnife.bind(this)
+
+        SimpleDialogModel.info { dialogModel ->
+
+
+        }
+
     }
 
-    var currentDialog: DialogModel? = null
+    var currentDialog: SimpleDialogModel? = null
 
-    fun dismissDialog(type: DialogModel.Type? = null): Boolean {
-        return if (type != null && currentDialog?.type == type){
+    fun dismissDialog(): Boolean {
+        return if (currentDialog == null){
             false
         } else {
             currentDialog?.dismiss()
@@ -25,7 +28,7 @@ abstract class NoPresenterActivity : AppCompatActivity() {
         }
     }
 
-    fun showDialog(model: DialogModel, replace: Boolean = false): Boolean {
+    fun showDialog(model: SimpleDialogModel, replace: Boolean = false): Boolean {
         return if (currentDialog != null && !replace) {
             false
         } else {
@@ -33,18 +36,6 @@ abstract class NoPresenterActivity : AppCompatActivity() {
             model.show(this)
             true
         }
-    }
-
-    fun showError(message: Message) {
-        ErrorDialogModel{ it.message = message }
-    }
-
-    fun showMessage(message: Message) {
-        MessageDialogModel { it.message = message }
-    }
-
-    fun showProgress(message: Message? = null) {
-        ProgressDialogModel { it.message = message }
     }
 
 }
