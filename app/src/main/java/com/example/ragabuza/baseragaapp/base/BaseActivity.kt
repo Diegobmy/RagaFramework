@@ -12,8 +12,6 @@ abstract class BaseActivity : NoPresenterActivity() {
 
     lateinit var shared: SharedPreferences
 
-    val myApp = application as BaseApp
-
     private fun setupPresenter() {
         shared = getSharedPreferences(
                 packageName, Context.MODE_PRIVATE)
@@ -25,8 +23,11 @@ abstract class BaseActivity : NoPresenterActivity() {
         }
     }
 
+    lateinit var myApp: BaseApp
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        myApp = application as BaseApp
         setupPresenter()
     }
 
