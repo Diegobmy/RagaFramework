@@ -5,6 +5,7 @@ import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
 import com.example.ragabuza.baseragaapp.base.Message
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
+import com.example.ragabuza.baseragaapp.base.m
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -15,6 +16,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         save.setOnClickListener {
             showDialog(DialogModel.error { dialog ->
                 title = Message("Nice")
@@ -23,6 +25,9 @@ class MainActivity : BaseActivity() {
                     dialog.builder.message = Message("uau")
                     dialog.refreshDialog()
                 })
+                iconColor = android.R.color.holo_blue_bright
+                backgroundColor = android.R.color.holo_red_dark
+                closeButtonColor = android.R.color.holo_orange_dark
             })
 
         }
