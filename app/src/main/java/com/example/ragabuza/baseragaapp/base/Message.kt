@@ -6,18 +6,11 @@ import org.json.JSONObject
 import retrofit2.Response
 
 
-class m{
-    companion object {
-        operator fun minus(string: String): Message {
-            return Message(string)
-        }
-        operator fun minus(@StringRes int: Int): Message {
-            return Message(int)
-        }
-    }
-}
-
 class Message {
+
+    val teste: Int by lazy {
+        4
+    }
 
     private var rawMessage: String? = null
     private var resMessage: Int? = null

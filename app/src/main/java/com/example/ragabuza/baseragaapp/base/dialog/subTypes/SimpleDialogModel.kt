@@ -17,8 +17,8 @@ class SimpleDialogModel(val builder: Builder) : DialogModel(builder) {
         var positiveColor: Int? = null
         var negativeColor: Int? = null
 
-        var positive: Pair<Message, () -> Unit>? = null
-        var negative: Pair<Message, () -> Unit>? = null
+        var positive: Pair<Message, UnitFunction>? = null
+        var negative: Pair<Message, UnitFunction>? = null
     }
 
     override fun RagaDialog.setInfo() {

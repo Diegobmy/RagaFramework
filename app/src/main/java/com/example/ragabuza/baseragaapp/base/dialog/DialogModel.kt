@@ -72,7 +72,7 @@ abstract class DialogModel(var myBuilder: Builder){
         var title: Message? = null
         var closeButton: Boolean = true
         var dismissOnClickOutside: Boolean = true
-        var onDismiss: (() -> Unit)? = null
+        var onDismiss: UnitFunction? = null
         var closeButtonColor: Int? = null
         var titleColor: Int? = null
         var backgroundColor: Int? = null

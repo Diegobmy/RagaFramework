@@ -21,19 +21,19 @@ abstract class API<T> : Observable<Response<T>>() {
             api.error = error
         }
 
-        fun onBegin(begin: () -> Unit) {
+        fun onBegin(begin: UnitFunction) {
             api.begin = begin
         }
 
-        fun onComplete(complete: () -> Unit) {
+        fun onComplete(complete: UnitFunction) {
             api.complete = complete
         }
     }
 
     var success: ((T) -> Unit)? = null
     var error: ((Message) -> Unit)? = null
-    var begin: (() -> Unit)? = null
-    var complete: (() -> Unit)? = null
+    var begin: (UnitFunction)? = null
+    var complete: (UnitFunction)? = null
     fun doSuccess(result: T) = success?.invoke(result)
 
     fun doError(view: BaseActivity?, result: Message){
