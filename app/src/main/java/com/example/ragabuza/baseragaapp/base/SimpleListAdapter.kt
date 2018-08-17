@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 class SimpleListAdapter<T>(
-        @LayoutRes private val layout: Int,
-        val list: MutableList<T>
+        val list: MutableList<T>,
+        @LayoutRes private val layout: Int = android.R.layout.simple_list_item_1
     ) : RecyclerView.Adapter<ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

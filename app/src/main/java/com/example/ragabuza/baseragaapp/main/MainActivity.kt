@@ -1,12 +1,11 @@
 package com.example.ragabuza.baseragaapp.main
 
 import android.os.Bundle
+import android.widget.Toast
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
-import com.example.ragabuza.baseragaapp.base.M
-import com.example.ragabuza.baseragaapp.base.pairWith
-import com.example.ragabuza.baseragaapp.base.plus
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
@@ -16,18 +15,13 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var lista = mutableListOf(1,2,3,4,5,6,7)
 
         save.setOnClickListener {
-            showDialog(DialogModel.error { dialog ->
-                title = M- "Nice"
-                message = M- "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent risus nulla, tincidunt vel molestie non, mattis in urna. Vivamus viverra ultrices imperdiet."
-                negative = M- "nice" + {
-                    dialog.builder.message = M- "uau"
-                    dialog.refreshDialog()
-                }
-                iconColor = android.R.color.holo_blue_bright
-                backgroundColor = android.R.color.holo_red_dark
-                closeButtonColor = android.R.color.holo_orange_dark
+            showDialog(DialogModel.list<Int> {
+                list = lista
+//                hasFilter = true
+                onItemSelected = {item, index -> Toast.makeText(this@MainActivity, item.toString(), Toast.LENGTH_SHORT).show() }
             })
 
         }
