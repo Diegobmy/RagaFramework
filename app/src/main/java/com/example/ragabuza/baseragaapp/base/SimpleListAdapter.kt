@@ -12,20 +12,33 @@ import android.widget.TextView
 class SimpleListAdapter<T>(
         val list: MutableList<T>,
         @LayoutRes private val layout: Int = android.R.layout.simple_list_item_1
-    ) : RecyclerView.Adapter<ViewHolder>() {
+) : RecyclerView.Adapter<ViewHolder>() {
+
+    var filterList = list
+
+    var filterMethod: (T, filter: String) -> Boolean = { item, filter -> item.toString().toLowerCase().contains(filter.trim().toLowerCase()) }
+    var filter: String = ""
+        set(value) {
+            field = value
+            filterList = if (value.isEmpty())
+                list
+            else
+                list.filter { filterMethod.invoke(it, value) }.toMutableList()
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
                 .inflate(layout, parent, false)
-        return object : ViewHolder(v){}
+        return object : ViewHolder(v) {}
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return filterList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
+        val item = filterList[position]
         listOfActions.forEach {
             it.second.invoke(this, holder.itemView.findViewById(it.first), item)
         }
@@ -35,18 +48,18 @@ class SimpleListAdapter<T>(
     private val listOfActions: MutableList<Pair<Int, (adapter: SimpleListAdapter<T>, view: View, item: T) -> Unit>> = mutableListOf()
     private var click: ((adapter: SimpleListAdapter<T>, index: Int, item: T) -> Unit)? = null
 
-    fun <V : View> forId(@IdRes idRes: Int, action: (adapter: SimpleListAdapter<T>, view: V, item: T) -> Unit): SimpleListAdapter<T>{
+    fun <V : View> forId(@IdRes idRes: Int, action: (adapter: SimpleListAdapter<T>, view: V, item: T) -> Unit): SimpleListAdapter<T> {
         listOfActions.add(Pair(idRes, action as (SimpleListAdapter<T>, View, T) -> Unit))
         return this
     }
 
-    fun addClick(action: (adapter: SimpleListAdapter<T>, index: Int, item: T) -> Unit): SimpleListAdapter<T>{
+    fun addClick(action: (adapter: SimpleListAdapter<T>, index: Int, item: T) -> Unit): SimpleListAdapter<T> {
         click = action
         return this
     }
 
-    fun justShowText(@IdRes idRes: Int): SimpleListAdapter<T>{
-        listOfActions.add(Pair(idRes){ adapter, view, text -> (view as TextView).text = text.toString() })
+    fun justShowText(@IdRes idRes: Int): SimpleListAdapter<T> {
+        listOfActions.add(Pair(idRes) { adapter, view, text -> (view as TextView).text = text.toString() })
         return this
     }
 

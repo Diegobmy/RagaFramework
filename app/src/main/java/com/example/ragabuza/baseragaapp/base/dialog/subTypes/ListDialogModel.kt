@@ -1,5 +1,6 @@
 package com.example.ragabuza.baseragaapp.base.dialog.subTypes
 
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.TextView
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
@@ -16,19 +17,22 @@ class ListDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
         titleView = dialog_title
         backgroungView = dialog_bg
 
-        var listCopy = builder.list
 
-        dialog_recycler.adapter = SimpleListAdapter(listCopy)
+        dialog_recycler.layoutManager = LinearLayoutManager(context)
+        val simpleAdapter = SimpleListAdapter(builder.list)
                 .forId<TextView>(android.R.id.text1) { _, view, item ->
                     view.text = builder.getItemLabel(item)
                 }.addClick { _, index, item ->
                     builder.onItemSelected?.invoke(item, index)
                 }
 
+        dialog_recycler.adapter = simpleAdapter
+
         if (dialog_filter.setVisible(builder.hasFilter)) {
+            simpleAdapter.filterMethod = builder.onFilter
             dialog_filter.hint = builder.filterHint.getMessage(context)
             dialog_filter.afterTextChanged { s ->
-                listCopy = builder.list.filter { builder.onFilter.invoke(it, s) }.toMutableList()
+                simpleAdapter.filter = s
             }
         }
 
@@ -37,7 +41,7 @@ class ListDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
     class Builder<T> : DialogModel.Builder() {
 
         var hasFilter = false
-        var onFilter: (item: T, filter: String) -> Boolean = {item, filter -> item.toString().contains(filter) }
+        var onFilter: (item: T, filter: String) -> Boolean = { item, filter -> getItemLabel.invoke(item).toLowerCase().contains(filter.trim().toLowerCase()) }
         var filterHint = Message("filter")
 
         var list = mutableListOf<T>()

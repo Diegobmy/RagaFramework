@@ -1,9 +1,11 @@
 package com.example.ragabuza.baseragaapp.main
 
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
+import com.example.ragabuza.baseragaapp.base.SimpleListAdapter
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -20,11 +22,27 @@ class MainActivity : BaseActivity() {
         save.setOnClickListener {
             showDialog(DialogModel.list<Int> {
                 list = lista
-//                hasFilter = true
-                onItemSelected = {item, index -> Toast.makeText(this@MainActivity, item.toString(), Toast.LENGTH_SHORT).show() }
+                hasFilter = true
+                onItemSelected = {item, index ->
+                    Toast.makeText(this@MainActivity, item.toString(), Toast.LENGTH_SHORT).show()
+                    it.dismiss()
+                }
+                getItemLabel = {
+                    if (it == 3)
+                        "nice"
+                    else
+                        it.toString()
+                }
             })
 
         }
+
+        recteste.adapter = SimpleListAdapter(lista)
+                .forId<TextView>(android.R.id.text1) { _, view, item ->
+                    view.text = item.toString()
+                }.addClick { _, index, item ->
+                    Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
+                }
 
     }
 
