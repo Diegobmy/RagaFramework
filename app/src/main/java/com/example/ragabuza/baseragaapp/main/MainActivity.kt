@@ -1,10 +1,12 @@
 package com.example.ragabuza.baseragaapp.main
 
 import android.os.Bundle
+import android.os.Handler
 import android.widget.TextView
 import android.widget.Toast
 import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.BaseActivity
+import com.example.ragabuza.baseragaapp.base.Message
 import com.example.ragabuza.baseragaapp.base.SimpleListAdapter
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,32 +19,28 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var lista = mutableListOf(1,2,3,4,5,6,7)
-
-        save.setOnClickListener {
-            showDialog(DialogModel.list<Int> {
-                list = lista
-                hasFilter = true
-                onItemSelected = {item, index ->
-                    Toast.makeText(this@MainActivity, item.toString(), Toast.LENGTH_SHORT).show()
-                    it.dismiss()
-                }
-                getItemLabel = {
-                    if (it == 3)
-                        "nice"
-                    else
-                        it.toString()
-                }
-            })
-
+        val progress = DialogModel.progress {
+            message = Message("nice")
+            title = Message("nice nice nice nice")
+            isPercentage = true
         }
 
-        recteste.adapter = SimpleListAdapter(lista)
-                .forId<TextView>(android.R.id.text1) { _, view, item ->
-                    view.text = item.toString()
-                }.addClick { _, index, item ->
-                    Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
-                }
+        val handler = Handler()
+        val runnable = object : Runnable {
+            override fun run() {
+                progress.percentage += 10
+                handler.postDelayed(this, 2000)
+            }
+        }
+
+//Start
+
+
+        save.setOnClickListener {
+            showDialog(progress)
+            handler.postDelayed(runnable, 2000)
+        }
+
 
     }
 

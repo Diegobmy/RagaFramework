@@ -42,7 +42,15 @@ class ListDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
 
         var hasFilter = false
         var onFilter: (item: T, filter: String) -> Boolean = { item, filter -> getItemLabel.invoke(item).toLowerCase().contains(filter.trim().toLowerCase()) }
+            set(value) {
+                hasFilter = true
+                field = value
+            }
         var filterHint = Message("filter")
+            set(value) {
+                hasFilter = true
+                field = value
+            }
 
         var list = mutableListOf<T>()
         var getItemLabel: (item: T) -> String = { it.toString() }
