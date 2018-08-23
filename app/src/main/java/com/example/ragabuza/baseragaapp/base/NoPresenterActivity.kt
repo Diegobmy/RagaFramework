@@ -8,7 +8,7 @@ abstract class NoPresenterActivity : AppCompatActivity() {
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
-        ButterKnife.bind(this)
+//        ButterKnife.bind(this)
     }
 
     var currentDialog: DialogModel? = null

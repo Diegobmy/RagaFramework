@@ -13,7 +13,7 @@ import retrofit2.http.Query
 
 data class MyServiceResponse(val response: String)
 
-@Service("http://www.mocky.io/v2/") interface MyService {
+@Service("http://www.mocky.io/v2/") interface bananinha {
 
     @GET("5b2f05692f000084006a2952")
     fun hitCountCheck(): API<MyServiceResponse>

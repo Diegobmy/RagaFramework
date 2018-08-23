@@ -1,12 +1,12 @@
 package com.example.ragabuza.baseragaapp.main
 
 import com.example.ragabuza.baseragaapp.base.*
-import com.example.ragabuza.baseragaapp.getMyService
+import com.example.ragabuza.baseragaapp.getbananinha
 
 class MainPresenter : BasePresenter<MainActivity>() {
 
     fun teste(){
-        getMyService().hitCountCheck().call {
+        getbananinha().hitCountCheck().call {
             onSuccess {  }
         }
     }

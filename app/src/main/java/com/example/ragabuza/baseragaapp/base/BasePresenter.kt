@@ -1,7 +1,6 @@
 package com.example.ragabuza.baseragaapp.base
 
 import android.content.SharedPreferences
-import com.example.ragabuza.baseragaapp.main.MyService
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.reactivex.Observable
