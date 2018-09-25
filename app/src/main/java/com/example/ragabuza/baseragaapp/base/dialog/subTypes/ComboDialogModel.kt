@@ -1,15 +1,13 @@
 package com.example.ragabuza.baseragaapp.base.dialog.subTypes
 
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.CheckBox
 import android.widget.TextView
 import com.example.ragabuza.baseragaapp.R
-import com.example.ragabuza.baseragaapp.base.Message
-import com.example.ragabuza.baseragaapp.base.SimpleListAdapter
-import com.example.ragabuza.baseragaapp.base.afterTextChanged
+import com.example.ragabuza.baseragaapp.base.*
 import com.example.ragabuza.baseragaapp.base.dialog.DialogModel
 import com.example.ragabuza.baseragaapp.base.dialog.RagaDialog
-import com.example.ragabuza.baseragaapp.base.setVisible
 import kotlinx.android.synthetic.main.dialog_combo.*
 
 class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
@@ -24,7 +22,7 @@ class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
         backgroungView = dialog_bg
 
 
-        dialog_recycler.layoutManager = LinearLayoutManager(context)
+        dialog_recycler.layoutManager = GridLayoutManager(context, builder.grid)
         val simpleAdapter = SimpleListAdapter(builder.list, R.layout.combo_item)
                 .forId<CheckBox>(R.id.checkbox) { _, view, item ->
                     view.text = builder.getItemLabel(item)
@@ -37,8 +35,17 @@ class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
                 }
 
         dialog_recycler.adapter = simpleAdapter
-        dialog_positive.setOnClickListener {
-            builder.positive?.second?.invoke(selected)
+
+        if (dialog_positive.setVisible(
+                        builder.positive.isNotNull()
+                )) {
+            dialog_positive.text = builder.positive?.first?.getMessage(context)
+            dialog_positive.setOnClickListener {
+                builder.positive?.second?.invoke(selected)
+            }
+        }
+        builder.positiveColor.doIfNotNull {
+            dialog_positive.setTextColor(context.getColorCompat(it))
         }
 
     }
@@ -49,6 +56,8 @@ class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
         var getItemLabel: (item: T) -> String = { it.toString() }
 
         var positive: Pair<Message, ((List<T>) -> Unit)>? = null
+        val grid: Int = 2
+        var positiveColor: Int? = null
     }
 
 }
