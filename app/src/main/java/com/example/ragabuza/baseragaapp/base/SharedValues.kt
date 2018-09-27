@@ -1,10 +1,10 @@
 package com.example.ragabuza.baseragaapp.base
 
 import com.example.ragabuza.raga_annotation.SharedController
+import java.util.*
+
+data class Plumpinha(val aa: String);
 
 @SharedController class SharedValues {
-    lateinit var testeString: String
-    var testeInt: Int = 0
-    var testeBoolean: Boolean = false
-    lateinit var testeExample: Example
+    val plumpinha: Plumpinha = Plumpinha("bjbjbjbj")
 }

@@ -19,15 +19,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val progress = DialogModel.combo<String> {
-            list.add("1")
-            list.add("2")
-            list.add("3")
-            list.add("4")
-            list.add("5")
+        val fragment = MainFragment()
 
-            positive = Message("conf") pairWith { list -> Toast.makeText(applicationContext, list.toString(), Toast.LENGTH_SHORT).show() }
-        }
+        val dialog = DialogModel.custom(fragment)
 
 
 
@@ -35,7 +29,7 @@ class MainActivity : BaseActivity() {
 
 
         save.setOnClickListener {
-            showDialog(progress)
+            showDialog(dialog)
         }
 
 

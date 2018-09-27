@@ -12,8 +12,10 @@ import com.example.ragabuza.baseragaapp.base.UnitFunction
 
 
 class ProgressDialogModel(val builder: Builder) : DialogModel(builder) {
+
+    override val viewId: Int = R.layout.dialog_progress
+
     override fun RagaDialog.setInfo() {
-        setContentView(R.layout.dialog_progress)
 
         percentage = 0
         animatedInt = 0
@@ -32,7 +34,7 @@ class ProgressDialogModel(val builder: Builder) : DialogModel(builder) {
         }
 
         if (dialog_message.setVisible(builder.message != null))
-            dialog_message.text = builder.message?.getMessage(context)
+            dialog_message.text = builder.message?.getMessage(context!!)
     }
 
 
@@ -64,7 +66,7 @@ class ProgressDialogModel(val builder: Builder) : DialogModel(builder) {
                     2000L
                 animator.addUpdateListener { animation ->
                     animatedInt = animation.animatedValue as Int
-                    dialog?.findViewById<ProgressBar>(R.id.dialog_progress_bar_horizontal)?.progress = animatedInt
+                    dialog?.view?.findViewById<ProgressBar>(R.id.dialog_progress_bar_horizontal)?.progress = animatedInt
                     if (animatedInt >= 100)
                         builder.onComplete?.invoke()
                 }

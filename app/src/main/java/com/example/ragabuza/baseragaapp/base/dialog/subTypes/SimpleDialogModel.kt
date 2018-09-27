@@ -8,6 +8,8 @@ import kotlinx.android.synthetic.main.dialog.*
 
 class SimpleDialogModel(val builder: Builder) : DialogModel(builder) {
 
+    override val viewId: Int = R.layout.dialog
+
     class Builder : DialogModel.Builder() {
         var message: Message? = null
         var icon: Int? = null
@@ -22,45 +24,44 @@ class SimpleDialogModel(val builder: Builder) : DialogModel(builder) {
     }
 
     override fun RagaDialog.setInfo() {
-        setContentView(R.layout.dialog)
 
         closeButtonView = dialog_close
         titleView = dialog_title
         backgroungView = dialog_bg
 
         if (dialog_icon.setVisible(builder.icon.isNotNull())) {
-            dialog_icon.setImageDrawable(context.getDrawable(builder.icon!!))
+            dialog_icon.setImageDrawable(context!!.getDrawable(builder.icon!!))
         }
 
         if (builder.message.isNotNull()) {
-            dialog_message.text = builder.message?.getMessage(context)
+            dialog_message.text = builder.message?.getMessage(context!!)
         }
 
         if (dialog_negative.setVisible(
                         builder.negative.isNotNull()
                 )) {
-            dialog_negative.text = builder.negative?.first?.getMessage(context)
+            dialog_negative.text = builder.negative?.first?.getMessage(context!!)
             dialog_negative.setOnClickListener { builder.negative?.second?.invoke() }
         }
 
         if (dialog_positive.setVisible(
                         builder.positive.isNotNull()
                 )) {
-            dialog_positive.text = builder.positive?.first?.getMessage(context)
+            dialog_positive.text = builder.positive?.first?.getMessage(context!!)
             dialog_positive.setOnClickListener { builder.positive?.second?.invoke() }
         }
         builder.iconColor.doIfNotNull {
-            dialog_icon.setColorFilter(context.getColorCompat(it))
+            dialog_icon.setColorFilter(context!!.getColorCompat(it))
         }
 
         builder.messageColor.doIfNotNull {
-            dialog_message.setTextColor(context.getColorCompat(it))
+            dialog_message.setTextColor(context!!.getColorCompat(it))
         }
         builder.positiveColor.doIfNotNull {
-            dialog_positive.setTextColor(context.getColorCompat(it))
+            dialog_positive.setTextColor(context!!.getColorCompat(it))
         }
         builder.negativeColor.doIfNotNull {
-            dialog_negative.setTextColor(context.getColorCompat(it))
+            dialog_negative.setTextColor(context!!.getColorCompat(it))
         }
 
 

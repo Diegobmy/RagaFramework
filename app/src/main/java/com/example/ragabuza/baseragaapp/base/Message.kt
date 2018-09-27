@@ -8,10 +8,6 @@ import retrofit2.Response
 
 class Message {
 
-    val teste: Int by lazy {
-        4
-    }
-
     private var rawMessage: String? = null
     private var resMessage: Int? = null
     private var varArgs: Array<out Any>? = null

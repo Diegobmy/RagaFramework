@@ -14,8 +14,9 @@ class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
 
     val selected: MutableList<T> = mutableListOf()
 
+    override val viewId: Int = R.layout.dialog_combo
+
     override fun RagaDialog.setInfo() {
-        setContentView(R.layout.dialog_combo)
 
         closeButtonView = dialog_close
         titleView = dialog_title
@@ -39,13 +40,14 @@ class ComboDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
         if (dialog_positive.setVisible(
                         builder.positive.isNotNull()
                 )) {
-            dialog_positive.text = builder.positive?.first?.getMessage(context)
+            dialog_positive.text = builder.positive?.first?.getMessage(context!!)
             dialog_positive.setOnClickListener {
                 builder.positive?.second?.invoke(selected)
+                dismiss()
             }
         }
         builder.positiveColor.doIfNotNull {
-            dialog_positive.setTextColor(context.getColorCompat(it))
+            dialog_positive.setTextColor(context!!.getColorCompat(it))
         }
 
     }

@@ -10,8 +10,10 @@ import com.example.ragabuza.baseragaapp.base.*
 import kotlinx.android.synthetic.main.dialog_list.*
 
 class ListDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
+
+    override val viewId: Int = R.layout.dialog_list
+
     override fun RagaDialog.setInfo() {
-        setContentView(R.layout.dialog_list)
 
         closeButtonView = dialog_close
         titleView = dialog_title
@@ -30,7 +32,7 @@ class ListDialogModel<T>(val builder: Builder<T>) : DialogModel(builder) {
 
         if (dialog_filter.setVisible(builder.hasFilter)) {
             simpleAdapter.filterMethod = builder.onFilter
-            dialog_filter.hint = builder.filterHint.getMessage(context)
+            dialog_filter.hint = builder.filterHint.getMessage(context!!)
             dialog_filter.afterTextChanged { s ->
                 simpleAdapter.filter = s
             }

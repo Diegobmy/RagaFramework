@@ -1,32 +1,40 @@
 package com.example.ragabuza.baseragaapp.base.dialog
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import com.example.ragabuza.baseragaapp.R
 import com.example.ragabuza.baseragaapp.base.*
+import com.example.ragabuza.baseragaapp.base.dialog.subTypes.CustomDialog
 
-class RagaDialog(
-        val activity: NoPresenterActivity,
-        private val model: DialogModel
-) : Dialog(activity) {
+class RagaDialog : DialogFragment() {
+    lateinit var model: DialogModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        return inflater.inflate(model.viewId, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         refreshDialog()
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    fun refreshDialog(){
+    fun refreshDialog() {
         model.refreshDialog()
-        setCanceledOnTouchOutside(model.myBuilder.dismissOnClickOutside)
+        dialog.setCanceledOnTouchOutside(model.myBuilder.dismissOnClickOutside)
     }
 
-    override fun dismiss() {
-        super.dismiss()
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
         model.myBuilder.onDismiss?.invoke()
-        activity.currentDialog = null
+        (activity as BaseActivity).currentDialog = null
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.ragabuza.baseragaapp.base.dialog
 
+import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -60,8 +61,8 @@ abstract class DialogModel(var myBuilder: Builder){
             actions?.invoke(builder, model)
             return model
         }
-        fun <T> custom(actions: (CustomDialog.Builder<T>.(CustomDialog<T>) -> Unit)? = null): CustomDialog<T> {
-            val builder = CustomDialog.Builder<T>()
+        fun <T> custom(fragment: T, actions: (CustomDialog.Builder<T>.(CustomDialog<T>) -> Unit)? = null): CustomDialog<T> where T : Fragment {
+            val builder = CustomDialog.Builder(fragment)
             val model = CustomDialog(builder)
             actions?.invoke(builder, model)
             return model
@@ -80,9 +81,11 @@ abstract class DialogModel(var myBuilder: Builder){
 
     var dialog: RagaDialog? = null
     fun show(activity: NoPresenterActivity) {
-        if (dialog == null)
-            dialog = RagaDialog(activity, this)
-        dialog?.show()
+        if (dialog == null) {
+            dialog = RagaDialog()
+            dialog?.model = this
+        }
+        dialog?.show(activity.supportFragmentManager, "currentDialog")
     }
 
     fun dismiss() {
@@ -100,25 +103,26 @@ abstract class DialogModel(var myBuilder: Builder){
                 closeButtonView!!.setOnClickListener { dismiss() }
             }
             myBuilder.closeButtonColor.doIfNotNull {
-                closeButtonView!!.setColorFilter(context.getColorCompat(it))
+                closeButtonView!!.setColorFilter(context!!.getColorCompat(it))
             }
         }
 
         if (myBuilder.title.isNotNull()) {
-            titleView?.text = myBuilder.title?.getMessage(context)
+            titleView?.text = myBuilder.title?.getMessage(context!!)
         }
         myBuilder.titleColor.doIfNotNull {
-            titleView?.setTextColor(context.getColorCompat(it))
+            titleView?.setTextColor(context!!.getColorCompat(it))
         }
 
         myBuilder.backgroundColor.doIfNotNull {
-            backgroungView?.setBackgroundColor(context.getColorCompat(it))
+            backgroungView?.setBackgroundColor(context!!.getColorCompat(it))
         }
     }
 
     var backgroungView: View? = null
     var closeButtonView: ImageButton? = null
     var titleView: TextView? = null
+    abstract val viewId: Int
 
     abstract fun RagaDialog.setInfo()
 
